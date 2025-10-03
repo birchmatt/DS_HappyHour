@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disney Springs Happy Hour Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .user-greeting {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group input[type="number"],
+        .form-group input[type="url"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .rating-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            font-size: 2em;
+            cursor: pointer;
+            flex-wrap: wrap;
+        }
+        
+        .star {
+            color: #ddd;
+            transition: color 0.2s;
+            user-select: none;
+        }
+        
+        .star.active,
+        .star:hover {
+            color: #ffc107;
+        }
+        
+        .rating-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 60px;
+        }
+        
+        .photo-upload-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px dashed #ddd;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .photo-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+        }
+        
+        .photo-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .photo-thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid #ddd;
+            transition: transform 0.2s;
+        }
+        
+        .photo-thumbnail:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-edit {
+            background: #ffc107;
+            color: #333;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+        
+        .btn-edit:hover {
+            background: #e0a800;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .drinks-list {
+            margin-top: 30px;
+        }
+        
+        .drinks-list h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .drink-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 60px 2fr 1fr 1fr 1fr 80px auto;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .drink-item:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .drink-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .drink-location {
+            color: #667eea;
+            font-size: 0.9em;
+        }
+        
+        .drink-time,
+        .drink-price {
+            color: #666;
+        }
+        
+        .drink-savings {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .drink-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ffc107;
+            font-size: 1.2em;
+        }
+        
+        .drink-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .export-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        
+        .export-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .welcome-modal .modal-content {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .welcome-modal h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        
+        .welcome-modal p {
+            margin-bottom: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .photo-modal .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            padding: 20px;
+        }
+        
+        .photo-modal img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+        }
+        
+        .comparison-result {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .comparison-section {
+            margin-bottom: 20px;
+        }
+        
+        .comparison-section h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .comparison-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .comparison-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .photo-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .photo-option-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .drink-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .star-rating {
+                font-size: 1.5em;
+                gap: 3px;
+            }
+            
+            .rating-number {
+                font-size: 1.2em;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 1em;
+            }
+            
+            .user-greeting {
+                font-size: 0.9em;
+                padding: 8px 16px;
+            }
+            
+            .photo-buttons {
+                flex-direction: column;
+            }
+            
+            .photo-options {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .photo-options input {
+                width: 100%;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .button-group .btn {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Disney Springs Happy Hour Tracker</h1>
+            <p>Track your happy hour adventures!</p>
+            <div class="user-greeting" id="userGreeting"></div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-card">
+                <h3>Total Drinks</h3>
+                <div class="value" id="totalDrinks">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Spent</h3>
+                <div class="value" id="totalCost">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Saved</h3>
+                <div class="value" id="totalSavings">$0.00</div>
+            </div>
+            <div class="stat-card">
+                <h3>Locations Visited</h3>
+                <div class="value" id="locationsVisited">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average Rating</h3>
+                <div class="value" id="avgRating">-</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <h2>Add Happy Hour Drink</h2>
+                <form id="drinkForm">
+                    <div class="form-group">
+                        <label for="location">Select Location</label>
+                        <select id="location" required>
+                            <option value="">Choose a location...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="drink">Drink/Deal</label>
+                        <select id="drink" required disabled>
+                            <option value="">First select a location...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="time" id="time" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customName">Custom Name (optional)</label>
+                        <input type="text" id="customName" placeholder="Override drink name if needed">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" placeholder="Add any notes about your experience..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Rate This Drink (1-10)</label>
+                        <div class="rating-group">
+                            <div class="star-rating" id="starRating">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                                <span class="star" data-value="6">★</span>
+                                <span class="star" data-value="7">★</span>
+                                <span class="star" data-value="8">★</span>
+                                <span class="star" data-value="9">★</span>
+                                <span class="star" data-value="10">★</span>
+                            </div>
+                            <span class="rating-number" id="ratingValue">0/10</span>
+                        </div>
+                        <input type="hidden" id="rating" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Add Photo (optional)</label>
+                        <div class="photo-upload-section">
+                            <div id="photoPreviewContainer" class="hidden">
+                                <img id="photoPreview" class="photo-preview">
+                                <button type="button" class="btn btn-danger btn-small" onclick="removePhoto()">Remove Photo</button>
+                            </div>
+                            <div id="photoUploadButtons">
+                                <p style="color: #666; margin-bottom: 10px;">Capture or upload a photo of your drink</p>
+                                <div class="photo-buttons">
+                                    <button type="button" class="btn btn-secondary btn-small" onclick="document.getElementById('photoFile').click()">Upload Photo</button>
+                                    <button type="button" class="btn btn-secondary btn-small" onclick="document.getElementById('photoCamera').click()">Take Photo</button>
+                                </div>
+                                <div class="photo-options">
+                                    <span class="photo-option-label">Or paste image URL:</span>
+                                    <input type="url" id="photoUrl" placeholder="https://..." style="flex: 1; padding: 8px;">
+                                    <button type="button" class="btn btn-secondary btn-small" onclick="loadPhotoFromUrl()">Load</button>
+                                </div>
+                                <input type="file" id="photoFile" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                                <input type="file" id="photoCamera" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoUpload(event)">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Add Drink</button>
+                </form>
+            </div>
+            
+            <div class="drinks-list">
+                <h2>Your Happy Hour Drinks</h2>
+                <div id="drinksList"></div>
+            </div>
+            
+            <div class="export-section">
+                <h2>Export & Import</h2>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="exportData()">Email Report</button>
+                    <button class="btn btn-secondary" onclick="downloadData()">Download Data</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import Data</button>
+                    <button class="btn btn-success" onclick="document.getElementById('compareFile').click()">Compare with Friend</button>
+                    <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+                    <input type="file" id="compareFile" accept=".json" class="hidden" onchange="compareWithFriend(event)">
+                    <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal welcome-modal" id="welcomeModal">
+        <div class="modal-content">
+            <h2>Welcome!</h2>
+            <p>Before we start tracking your Disney Springs happy hour adventures, what's your name?</p>
+            <form id="nameForm">
+                <div class="form-group">
+                    <input type="text" id="userName" placeholder="Enter your name" required style="text-align: center; font-size: 1.2em;">
+                </div>
+                <button type="submit" class="btn btn-primary">Let's Go!</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3>Edit Drink</h3>
+            <form id="editForm">
+                <input type="hidden" id="editIndex">
+                <div class="form-group">
+                    <label for="editName">Drink Name</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editDate">Date</label>
+                        <input type="date" id="editDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTime">Time</label>
+                        <input type="time" id="editTime" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editPrice">Price Paid ($)</label>
+                    <input type="number" id="editPrice" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="editNotes">Notes</label>
+                    <textarea id="editNotes"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Rating (1-10)</label>
+                    <div class="rating-group">
+                        <div class="star-rating" id="editStarRating">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                            <span class="star" data-value="6">★</span>
+                            <span class="star" data-value="7">★</span>
+                            <span class="star" data-value="8">★</span>
+                            <span class="star" data-value="9">★</span>
+                            <span class="star" data-value="10">★</span>
+                        </div>
+                        <span class="rating-number" id="editRatingValue">0/10</span>
+                    </div>
+                    <input type="hidden" id="editRating">
+                </div>
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="modal photo-modal" id="photoModal">
+        <div class="modal-content">
+            <img id="photoModalImage" src="">
+            <button class="btn btn-secondary" onclick="closePhotoModal()" style="margin-top: 15px; width: 100%;">Close</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="compareModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h3>Comparison with Friend</h3>
+            <div id="comparisonResult"></div>
+            <button class="btn btn-secondary" onclick="closeCompareModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const DRINKS_DATA = {
+            "City Works Eatery & Pour House": [
+                {name: "Local Draft (Happy Hour)", price: 5.00, regularPrice: 7.00},
+                {name: "Backyard Flight (Happy Hour)", price: 8.00, regularPrice: 10.00},
+                {name: "Hard Seltzer (Happy Hour)", price: 4.00, regularPrice: 6.00},
+                {name: "Well Drink (Happy Hour)", price: 5.00, regularPrice: 7.00},
+                {name: "Wine Glass (Happy Hour)", price: 6.00, regularPrice: 8.00}
+            ],
+            "eet by Maneet Chauhan": [
+                {name: "Rupee Beer (Happy Hour)", price: 6.48, regularPrice: 12.95},
+                {name: "Select Wine (Happy Hour)", price: 6.00, regularPrice: 12.00},
+                {name: "Select Cocktail (Happy Hour)", price: 7.00, regularPrice: 14.00}
+            ],
+            "Frontera Cocina": [
+                {name: "House Margarita (Happy Hour)", price: 7.00, regularPrice: 14.00},
+                {name: "Specialty Drink (Happy Hour)", price: 10.00, regularPrice: 16.00},
+                {name: "Classic Margarita Monday", price: 7.00, regularPrice: 14.00},
+                {name: "Tequila Shot Tuesday", price: 5.00, regularPrice: 10.00},
+                {name: "Beer (Happy Hour)", price: 6.00, regularPrice: 10.00},
+                {name: "Wine (Happy Hour)", price: 7.00, regularPrice: 12.00}
+            ],
+            "House of Blues Restaurant & Bar": [
+                {name: "Bottled/Canned Beer (Happy Hour)", price: 6.00, regularPrice: 8.00},
+                {name: "Select Seltzer (Happy Hour)", price: 4.00, regularPrice: 8.00},
+                {name: "House Wine (Happy Hour)", price: 7.00, regularPrice: 12.00},
+                {name: "Well Liquor (Happy Hour)", price: 7.00, regularPrice: 12.00},
+                {name: "Margarita (Happy Hour)", price: 9.00, regularPrice: 14.00},
+                {name: "Mule (Happy Hour)", price: 9.00, regularPrice: 14.00},
+                {name: "Long Island Iced Tea (Happy Hour)", price: 9.00, regularPrice: 14.00}
+            ],
+            "Jaleo by José Andrés": [
+                {name: "Frozen Sangria (Happy Hour)", price: 7.00, regularPrice: 14.00},
+                {name: "Iced Sangria (Happy Hour)", price: 7.00, regularPrice: 14.00},
+                {name: "Spanish Wine (Happy Hour)", price: 7.00, regularPrice: 13.00},
+                {name: "Blanco Lobetia (Happy Hour)", price: 6.00, regularPrice: 11.00},
+                {name: "Beer (Happy Hour)", price: 7.00, regularPrice: 11.00}
+            ],
+            "Paddlefish": [
+                {name: "Draft Beer (Happy Hour - Bar)", price: 5.00, regularPrice: 9.00},
+                {name: "Rosé Bottle (Happy Hour - Bar)", price: 20.00, regularPrice: 40.00},
+                {name: "Draft Beer (Happy Hour - Rooftop)", price: 5.00, regularPrice: 9.00},
+                {name: "Rosé Bottle (Happy Hour - Rooftop)", price: 20.00, regularPrice: 40.00}
+            ],
+            "Paradiso 37": [
+                {name: "House Margarita (Social Hour)", price: 8.00, regularPrice: 14.00},
+                {name: "Domestic Draft Beer (Social Hour)", price: 7.00, regularPrice: 11.00}
+            ],
+            "Raglan Road Irish Pub": [
+                {name: "Domestic Draught Beer (Happy Hour)", price: 6.00, regularPrice: 10.00},
+                {name: "Premium Well Liquor (Happy Hour)", price: 6.00, regularPrice: 11.00},
+                {name: "Select Cocktail (Happy Hour)", price: 10.00, regularPrice: 15.00}
+            ],
+            "STK Steakhouse": [
+                {name: "Chimay Bottle (Social Hour)", price: 9.00, regularPrice: 15.00},
+                {name: "Select Wine Glass (Social Hour)", price: 9.00, regularPrice: 16.00},
+                {name: "Espresso Martini (Social Hour)", price: 9.00, regularPrice: 18.00},
+                {name: "Guava Berry Kiss (Social Hour)", price: 9.00, regularPrice: 23.00}
+            ],
+            "Stargazers Outdoor Bar": [
+                {name: "Craft Beer Pint (Happy Hour)", price: 5.00, regularPrice: 10.00},
+                {name: "Well Drink (Happy Hour)", price: 5.00, regularPrice: 10.00},
+                {name: "Double Well (Happy Hour)", price: 8.00, regularPrice: 15.00}
+            ],
+            "Summer House on the Lake": [
+                {name: "Classic Martini (Martini Hour)", price: 10.00, regularPrice: 16.00},
+                {name: "Espresso Martini (Martini Hour)", price: 10.00, regularPrice: 16.00},
+                {name: "Finn Collins (Martini Hour)", price: 10.00, regularPrice: 16.00},
+                {name: "Wine Glass (Martini Hour)", price: 5.00, regularPrice: 12.00},
+                {name: "Rotating Draft Beer (Martini Hour)", price: 4.00, regularPrice: 9.00}
+            ],
+            "Terralina Crafted Italian": [
+                {name: "Select Beer (Happy Hour)", price: 5.00, regularPrice: 10.00},
+                {name: "Select Beer Premium (Happy Hour)", price: 6.50, regularPrice: 12.00},
+                {name: "Wine Glass (Happy Hour)", price: 6.00, regularPrice: 12.00}
+            ],
+            "The Edison": [
+                {name: "Buffalo Trace Old Fashioned (Happy Hour)", price: 6.00, regularPrice: 14.00},
+                {name: "South of Nowhere Tequila (Happy Hour)", price: 6.00, regularPrice: 14.00},
+                {name: "Freixenet Brut Cava (Happy Hour)", price: 6.00, regularPrice: 12.00},
+                {name: "Edison Signature Pilsner (Happy Hour)", price: 6.00, regularPrice: 11.00},
+                {name: "Strawberry Fields Forever (Happy Hour)", price: 8.00, regularPrice: 15.00},
+                {name: "The Edison Single Barrel (Happy Hour)", price: 8.00, regularPrice: 15.00},
+                {name: "Frenzy Sauvignon Blanc (Happy Hour)", price: 8.00, regularPrice: 14.00},
+                {name: "Bud Light Lager (Happy Hour)", price: 8.00, regularPrice: 12.00},
+                {name: "He Went To Paris (Happy Hour)", price: 10.00, regularPrice: 16.00},
+                {name: "Unshackled Red Blend (Happy Hour)", price: 10.00, regularPrice: 16.00},
+                {name: "Hot Mess Tequila (Happy Hour)", price: 10.00, regularPrice: 16.00},
+                {name: "Sierra Nevada Hazy Little Thing (Happy Hour)", price: 10.00, regularPrice: 14.00}
+            ],
+            "Wine Bar George": [
+                {name: "Wine by Glass (Bites & Boards)", price: 8.00, regularPrice: 12.00},
+                {name: "Wine by Ounce (Bites & Boards)", price: 3.00, regularPrice: 5.00}
+            ]
+        };
+
+        let drinks = [];
+        let userName = '';
+        let currentRating = 0;
+        let editCurrentRating = 0;
+        let currentPhotoData = null;
+        let db;
+        
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('DisneySpringsDrinkTracker', 1);
+                
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains('photos')) {
+                        db.createObjectStore('photos', { keyPath: 'id' });
+                    }
+                };
+            });
+        }
+        
+        async function savePhotoToDB(id, photoData) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['photos'], 'readwrite');
+                const store = transaction.objectStore('photos');
+                const request = store.put({ id: id, data: photoData });
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        async function getPhotoFromDB(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['photos'], 'readonly');
+                const store = transaction.objectStore('photos');
+                const request = store.get(id);
+                
+                request.onsuccess = () => resolve(request.result ? request.result.data : null);
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        async function deletePhotoFromDB(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['photos'], 'readwrite');
+                const store = transaction.objectStore('photos');
+                const request = store.delete(id);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+        
+        function compressImage(file, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        async function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            try {
+                const compressed = await compressImage(file);
+                currentPhotoData = compressed;
+                document.getElementById('photoPreview').src = compressed;
+                document.getElementById('photoPreviewContainer').classList.remove('hidden');
+                document.getElementById('photoUploadButtons').classList.add('hidden');
+            } catch (error) {
+                alert('Error processing photo: ' + error.message);
+            }
+        }
+        
+        function loadPhotoFromUrl() {
+            const url = document.getElementById('photoUrl').value.trim();
+            if (!url) return;
+            
+            currentPhotoData = { url: url };
+            document.getElementById('photoPreview').src = url;
+            document.getElementById('photoPreviewContainer').classList.remove('hidden');
+            document.getElementById('photoUploadButtons').classList.add('hidden');
+        }
+        
+        function removePhoto() {
+            currentPhotoData = null;
+            document.getElementById('photoPreview').src = '';
+            document.getElementById('photoPreviewContainer').classList.add('hidden');
+            document.getElementById('photoUploadButtons').classList.remove('hidden');
+            document.getElementById('photoUrl').value = '';
+        }
+        
+        function showPhotoModal(photoData) {
+            if (!photoData) return;
+            
+            const imgSrc = photoData.url || photoData;
+            document.getElementById('photoModalImage').src = imgSrc;
+            document.getElementById('photoModal').classList.add('active');
+        }
+        
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.remove('active');
+        }
+        
+        async function init() {
+            try {
+                await initDB();
+            } catch (error) {
+                console.error('Error initializing database:', error);
+            }
+            
+            const savedName = localStorage.getItem('disneySpringUserName');
+            if (savedName) {
+                userName = savedName;
+                document.getElementById('userGreeting').textContent = `Welcome back, ${userName}!`;
+                loadData();
+                populateLocations();
+                setCurrentDateTime();
+                updateDisplay();
+                setupRatingStars();
+            } else {
+                document.getElementById('welcomeModal').classList.add('active');
+            }
+        }
+        
+        document.getElementById('nameForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            userName = document.getElementById('userName').value.trim();
+            if (userName) {
+                localStorage.setItem('disneySpringUserName', userName);
+                document.getElementById('userGreeting').textContent = `Welcome, ${userName}!`;
+                document.getElementById('welcomeModal').classList.remove('active');
+                loadData();
+                populateLocations();
+                setCurrentDateTime();
+                updateDisplay();
+                setupRatingStars();
+            }
+        });
+        
+        function setupRatingStars() {
+            const starRating = document.getElementById('starRating');
+            const stars = starRating.querySelectorAll('.star');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    currentRating = parseInt(this.dataset.value);
+                    document.getElementById('rating').value = currentRating;
+                    document.getElementById('ratingValue').textContent = `${currentRating}/10`;
+                    updateStarDisplay(starRating, currentRating);
+                });
+                
+                star.addEventListener('mouseenter', function() {
+                    const value = parseInt(this.dataset.value);
+                    updateStarDisplay(starRating, value);
+                });
+            });
+            
+            starRating.addEventListener('mouseleave', function() {
+                updateStarDisplay(starRating, currentRating);
+            });
+            
+            const editStarRating = document.getElementById('editStarRating');
+            const editStars = editStarRating.querySelectorAll('.star');
+            
+            editStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    editCurrentRating = parseInt(this.dataset.value);
+                    document.getElementById('editRating').value = editCurrentRating;
+                    document.getElementById('editRatingValue').textContent = `${editCurrentRating}/10`;
+                    updateStarDisplay(editStarRating, editCurrentRating);
+                });
+                
+                star.addEventListener('mouseenter', function() {
+                    const value = parseInt(this.dataset.value);
+                    updateStarDisplay(editStarRating, value);
+                });
+            });
+            
+            editStarRating.addEventListener('mouseleave', function() {
+                updateStarDisplay(editStarRating, editCurrentRating);
+            });
+        }
+        
+        function updateStarDisplay(container, value) {
+            const stars = container.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+        
+        function populateLocations() {
+            const locationSelect = document.getElementById('location');
+            Object.keys(DRINKS_DATA).sort().forEach(location => {
+                const option = document.createElement('option');
+                option.value = location;
+                option.textContent = location;
+                locationSelect.appendChild(option);
+            });
+        }
+        
+        document.getElementById('location').addEventListener('change', function() {
+            const drinkSelect = document.getElementById('drink');
+            drinkSelect.innerHTML = '<option value="">Choose a drink...</option>';
+            drinkSelect.disabled = false;
+            
+            const location = this.value;
+            if (location && DRINKS_DATA[location]) {
+                DRINKS_DATA[location].forEach(drink => {
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(drink);
+                    const savings = drink.regularPrice - drink.price;
+                    option.textContent = `${drink.name} - ${drink.price.toFixed(2)} (Save ${savings.toFixed(2)})`;
+                    drinkSelect.appendChild(option);
+                });
+            }
+        });
+        
+        function setCurrentDateTime() {
+            const now = new Date();
+            document.getElementById('date').valueAsDate = now;
+            document.getElementById('time').value = now.toTimeString().slice(0, 5);
+        }
+        
+        document.getElementById('drinkForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (currentRating === 0) {
+                alert('Please rate your drink before adding it!');
+                return;
+            }
+            
+            const location = document.getElementById('location').value;
+            const drinkData = JSON.parse(document.getElementById('drink').value);
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const customName = document.getElementById('customName').value;
+            const notes = document.getElementById('notes').value;
+            
+            const drinkId = Date.now();
+            
+            const drink = {
+                id: drinkId,
+                userName: userName,
+                location: location,
+                name: customName || drinkData.name,
+                price: drinkData.price,
+                regularPrice: drinkData.regularPrice,
+                savings: drinkData.regularPrice - drinkData.price,
+                date: date,
+                time: time,
+                rating: currentRating,
+                notes: notes,
+                hasPhoto: !!currentPhotoData,
+                photoType: currentPhotoData ? (currentPhotoData.url ? 'url' : 'data') : null,
+                timestamp: new Date(`${date}T${time}`).getTime()
+            };
+            
+            if (currentPhotoData) {
+                try {
+                    await savePhotoToDB(drinkId, currentPhotoData);
+                } catch (error) {
+                    console.error('Error saving photo:', error);
+                }
+            }
+            
+            drinks.push(drink);
+            saveData();
+            updateDisplay();
+            
+            this.reset();
+            document.getElementById('drink').disabled = true;
+            currentRating = 0;
+            document.getElementById('rating').value = 0;
+            document.getElementById('ratingValue').textContent = '0/10';
+            updateStarDisplay(document.getElementById('starRating'), 0);
+            removePhoto();
+            setCurrentDateTime();
+        });
+        
+        function updateDisplay() {
+            drinks.sort((a, b) => a.timestamp - b.timestamp);
+            
+            const totalDrinks = drinks.length;
+            const totalCost = drinks.reduce((sum, d) => sum + d.price, 0);
+            const totalSavings = drinks.reduce((sum, d) => sum + d.savings, 0);
+            const locations = new Set(drinks.map(d => d.location)).size;
+            const avgRating = totalDrinks > 0 ? (drinks.reduce((sum, d) => sum + d.rating, 0) / totalDrinks).toFixed(1) : '-';
+            
+            document.getElementById('totalDrinks').textContent = totalDrinks;
+            document.getElementById('totalCost').textContent = `${totalCost.toFixed(2)}`;
+            document.getElementById('totalSavings').textContent = `${totalSavings.toFixed(2)}`;
+            document.getElementById('locationsVisited').textContent = locations;
+            document.getElementById('avgRating').textContent = avgRating !== '-' ? `${avgRating}` : '-';
+            
+            renderDrinksList();
+        }
+        
+        async function renderDrinksList() {
+            const container = document.getElementById('drinksList');
+            
+            if (drinks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20,10H4V8L6,6h12l2,2V10M20,12v6c0,1.1-0.9,2-2,2H6c-1.1,0-2-0.9-2-2v-6H20z"/>
+                        </svg>
+                        <h3>No drinks tracked yet</h3>
+                        <p>Start your Disney Springs happy hour adventure by adding your first drink!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const drinkItems = await Promise.all(drinks.map(async (drink, index) => {
+                let photoHtml = '<div style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999;">No Photo</div>';
+                
+                if (drink.hasPhoto) {
+                    try {
+                        const photoData = await getPhotoFromDB(drink.id);
+                        if (photoData) {
+                            const imgSrc = photoData.url || photoData;
+                            photoHtml = `<img src="${imgSrc}" class="photo-thumbnail" onclick="showPhotoModal(${drink.id})" alt="Drink photo">`;
+                        }
+                    } catch (error) {
+                        console.error('Error loading photo:', error);
+                    }
+                }
+                
+                return `
+                    <div class="drink-item">
+                        ${photoHtml}
+                        <div>
+                            <div class="drink-name">${drink.name}</div>
+                            <div class="drink-location">${drink.location}</div>
+                        </div>
+                        <div class="drink-time">${drink.date}</div>
+                        <div class="drink-time">${drink.time}</div>
+                        <div>
+                            <div class="drink-price">${drink.price.toFixed(2)}</div>
+                            <div class="drink-savings">Saved ${drink.savings.toFixed(2)}</div>
+                        </div>
+                        <div class="drink-rating">
+                            <span>${drink.rating}</span>
+                            <span>⭐</span>
+                        </div>
+                        <div class="drink-actions">
+                            <button class="btn btn-edit" onclick="editDrink(${index})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteDrink(${index})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }));
+            
+            container.innerHTML = drinkItems.join('');
+        }
+        
+        async function showPhotoModal(drinkId) {
+            try {
+                const photoData = await getPhotoFromDB(drinkId);
+                if (photoData) {
+                    const imgSrc = photoData.url || photoData;
+                    document.getElementById('photoModalImage').src = imgSrc;
+                    document.getElementById('photoModal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error loading photo:', error);
+            }
+        }
+        
+        function editDrink(index) {
+            const drink = drinks[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editName').value = drink.name;
+            document.getElementById('editDate').value = drink.date;
+            document.getElementById('editTime').value = drink.time;
+            document.getElementById('editPrice').value = drink.price;
+            document.getElementById('editNotes').value = drink.notes || '';
+            editCurrentRating = drink.rating;
+            document.getElementById('editRating').value = drink.rating;
+            document.getElementById('editRatingValue').textContent = `${drink.rating}/10`;
+            updateStarDisplay(document.getElementById('editStarRating'), drink.rating);
+            document.getElementById('editModal').classList.add('active');
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+        
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const index = parseInt(document.getElementById('editIndex').value);
+            const name = document.getElementById('editName').value;
+            const date = document.getElementById('editDate').value;
+            const time = document.getElementById('editTime').value;
+            const price = parseFloat(document.getElementById('editPrice').value);
+            const notes = document.getElementById('editNotes').value;
+            const rating = editCurrentRating;
+            
+            const oldRegularPrice = drinks[index].regularPrice;
+            const newSavings = oldRegularPrice - price;
+            
+            drinks[index] = {
+                ...drinks[index],
+                name: name,
+                date: date,
+                time: time,
+                price: price,
+                savings: newSavings,
+                rating: rating,
+                notes: notes,
+                timestamp: new Date(`${date}T${time}`).getTime()
+            };
+            
+            saveData();
+            updateDisplay();
+            closeEditModal();
+        });
+        
+        async function deleteDrink(index) {
+            if (confirm('Are you sure you want to delete this drink?')) {
+                const drink = drinks[index];
+                if (drink.hasPhoto) {
+                    try {
+                        await deletePhotoFromDB(drink.id);
+                    } catch (error) {
+                        console.error('Error deleting photo:', error);
+                    }
+                }
+                drinks.splice(index, 1);
+                saveData();
+                updateDisplay();
+            }
+        }
+        
+        function saveData() {
+            localStorage.setItem('disneySpringsDrinks', JSON.stringify(drinks));
+        }
+        
+        function loadData() {
+            const saved = localStorage.getItem('disneySpringsDrinks');
+            if (saved) {
+                drinks = JSON.parse(saved);
+            }
+        }
+        
+        function exportData() {
+            const report = generateReport();
+            const subject = encodeURIComponent(`Disney Springs Happy Hour Report - ${userName}`);
+            const body = encodeURIComponent(report);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+        
+        function generateReport() {
+            const totalCost = drinks.reduce((sum, d) => sum + d.price, 0);
+            const totalSavings = drinks.reduce((sum, d) => sum + d.savings, 0);
+            const locations = new Set(drinks.map(d => d.location));
+            const avgRating = drinks.length > 0 ? (drinks.reduce((sum, d) => sum + d.rating, 0) / drinks.length).toFixed(1) : 0;
+            
+            let report = `=== DISNEY SPRINGS HAPPY HOUR REPORT ===\n`;
+            report += `Tracker: ${userName}\n\n`;
+            report += `Total Drinks: ${drinks.length}\n`;
+            report += `Total Spent: ${totalCost.toFixed(2)}\n`;
+            report += `Total Saved: ${totalSavings.toFixed(2)}\n`;
+            report += `Locations Visited: ${locations.size}\n`;
+            report += `Average Rating: ${avgRating}/10\n`;
+            report += `Drinks with Photos: ${drinks.filter(d => d.hasPhoto).length}\n\n`;
+            
+            report += '=== TOP RATED DRINKS ===\n';
+            const topDrinks = [...drinks].sort((a, b) => b.rating - a.rating).slice(0, 5);
+            topDrinks.forEach((d, i) => {
+                report += `${i + 1}. ${d.name} (${d.location}) - ${d.rating}/10 - Saved ${d.savings.toFixed(2)} ${d.hasPhoto ? '📸' : ''}\n`;
+            });
+            
+            report += '\n=== DRINKS BY LOCATION ===\n';
+            locations.forEach(location => {
+                const locationDrinks = drinks.filter(d => d.location === location);
+                const locationCost = locationDrinks.reduce((sum, d) => sum + d.price, 0);
+                const locationSavings = locationDrinks.reduce((sum, d) => sum + d.savings, 0);
+                const locationAvgRating = (locationDrinks.reduce((sum, d) => sum + d.rating, 0) / locationDrinks.length).toFixed(1);
+                report += `\n${location} (${locationDrinks.length} drinks, ${locationCost.toFixed(2)} spent, ${locationSavings.toFixed(2)} saved, avg: ${locationAvgRating}/10)\n`;
+                locationDrinks.forEach(d => {
+                    report += `  - ${d.name} | ${d.date} ${d.time} | ${d.price.toFixed(2)} | ${d.rating}/10 ${d.hasPhoto ? '📸' : ''}\n`;
+                });
+            });
+            
+            report += '\n=== CHRONOLOGICAL LIST ===\n';
+            drinks.forEach((d, i) => {
+                report += `${i + 1}. ${d.name} (${d.location}) | ${d.date} ${d.time} | ${d.price.toFixed(2)} (Saved ${d.savings.toFixed(2)}) | ${d.rating}/10 ${d.hasPhoto ? '📸' : ''}\n`;
+                if (d.notes) {
+                    report += `   Notes: ${d.notes}\n`;
+                }
+            });
+            
+            return report;
+        }
+        
+        async function downloadData() {
+            const photosToExport = {};
+            
+            for (const drink of drinks) {
+                if (drink.hasPhoto) {
+                    try {
+                        const photoData = await getPhotoFromDB(drink.id);
+                        if (photoData) {
+                            photosToExport[drink.id] = photoData;
+                        }
+                    } catch (error) {
+                        console.error('Error exporting photo:', error);
+                    }
+                }
+            }
+            
+            const exportObj = {
+                userName: userName,
+                drinks: drinks,
+                photos: photosToExport,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = JSON.stringify(exportObj, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `disney-springs-drinks-${userName}-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        async function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    const importedDrinks = imported.drinks || imported;
+                    const importedPhotos = imported.photos || {};
+                    
+                    const existingIds = new Set(drinks.map(d => d.id));
+                    const newDrinks = importedDrinks.filter(d => !existingIds.has(d.id));
+                    
+                    if (newDrinks.length > 0) {
+                        const message = `Found ${newDrinks.length} new drinks to import. Current data has ${drinks.length} drinks.\n\nMerge (add new drinks) or Replace (overwrite all)?`;
+                        const merge = confirm(message + '\n\nOK = Merge, Cancel = Replace');
+                        
+                        if (merge) {
+                            drinks = drinks.concat(newDrinks);
+                            for (const drink of newDrinks) {
+                                if (drink.hasPhoto && importedPhotos[drink.id]) {
+                                    await savePhotoToDB(drink.id, importedPhotos[drink.id]);
+                                }
+                            }
+                            alert(`Merged ${newDrinks.length} new drinks!`);
+                        } else {
+                            drinks = importedDrinks;
+                            for (const drink of importedDrinks) {
+                                if (drink.hasPhoto && importedPhotos[drink.id]) {
+                                    await savePhotoToDB(drink.id, importedPhotos[drink.id]);
+                                }
+                            }
+                            alert(`Replaced all data with ${importedDrinks.length} drinks!`);
+                        }
+                    } else {
+                        const replace = confirm('No new drinks found. Replace all existing data?');
+                        if (replace) {
+                            drinks = importedDrinks;
+                            for (const drink of importedDrinks) {
+                                if (drink.hasPhoto && importedPhotos[drink.id]) {
+                                    await savePhotoToDB(drink.id, importedPhotos[drink.id]);
+                                }
+                            }
+                            alert(`Replaced all data with ${importedDrinks.length} drinks!`);
+                        } else {
+                            alert('Import cancelled.');
+                            return;
+                        }
+                    }
+                    
+                    saveData();
+                    updateDisplay();
+                } catch (error) {
+                    alert('Error importing data: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        function compareWithFriend(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const friendData = JSON.parse(e.target.result);
+                    const friendName = friendData.userName || 'Friend';
+                    const friendDrinks = friendData.drinks || friendData;
+                    
+                    generateComparison(friendName, friendDrinks);
+                    document.getElementById('compareModal').classList.add('active');
+                } catch (error) {
+                    alert('Error reading friend data: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        function generateComparison(friendName, friendDrinks) {
+            const myTotalCost = drinks.reduce((sum, d) => sum + d.price, 0);
+            const friendTotalCost = friendDrinks.reduce((sum, d) => sum + d.price, 0);
+            
+            const myTotalSavings = drinks.reduce((sum, d) => sum + d.savings, 0);
+            const friendTotalSavings = friendDrinks.reduce((sum, d) => sum + (d.savings || 0), 0);
+            
+            const myAvgRating = drinks.length > 0 ? (drinks.reduce((sum, d) => sum + d.rating, 0) / drinks.length).toFixed(1) : 0;
+            const friendAvgRating = friendDrinks.length > 0 ? (friendDrinks.reduce((sum, d) => sum + d.rating, 0) / friendDrinks.length).toFixed(1) : 0;
+            
+            const myLocations = new Set(drinks.map(d => d.location));
+            const friendLocations = new Set(friendDrinks.map(d => d.location));
+            
+            const myPhotos = drinks.filter(d => d.hasPhoto).length;
+            const friendPhotos = friendDrinks.filter(d => d.hasPhoto).length;
+            
+            const sharedDrinks = drinks.filter(myDrink => 
+                friendDrinks.some(fd => fd.name === myDrink.name)
+            );
+            
+            const onlyMine = drinks.filter(myDrink => 
+                !friendDrinks.some(fd => fd.name === myDrink.name)
+            );
+            
+            const onlyFriend = friendDrinks.filter(fd => 
+                !drinks.some(myDrink => myDrink.name === fd.name)
+            );
+            
+            let html = `
+                <div class="comparison-result">
+                    <div class="comparison-section">
+                        <h4>Overall Stats</h4>
+                        <div class="comparison-row">
+                            <div class="comparison-item">
+                                <strong>${userName}</strong>
+                                <div>Total Drinks: ${drinks.length}</div>
+                                <div>Total Spent: ${myTotalCost.toFixed(2)}</div>
+                                <div>Total Saved: ${myTotalSavings.toFixed(2)}</div>
+                                <div>Avg Rating: ${myAvgRating}/10</div>
+                                <div>Locations: ${myLocations.size}</div>
+                                <div>Photos: ${myPhotos}</div>
+                            </div>
+                            <div class="comparison-item">
+                                <strong>${friendName}</strong>
+                                <div>Total Drinks: ${friendDrinks.length}</div>
+                                <div>Total Spent: ${friendTotalCost.toFixed(2)}</div>
+                                <div>Total Saved: ${friendTotalSavings.toFixed(2)}</div>
+                                <div>Avg Rating: ${friendAvgRating}/10</div>
+                                <div>Locations: ${friendLocations.size}</div>
+                                <div>Photos: ${friendPhotos}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="comparison-section">
+                        <h4>Drinks Both Tried (${sharedDrinks.length})</h4>
+                        ${sharedDrinks.length > 0 ? sharedDrinks.map(d => {
+                            const friendDrink = friendDrinks.find(fd => fd.name === d.name);
+                            return `
+                                <div style="padding: 10px; background: #f8f9fa; margin: 5px 0; border-radius: 5px;">
+                                    <strong>${d.name}</strong> (${d.location})<br>
+                                    ${userName}: ${d.rating}/10 ${d.hasPhoto ? '📸' : ''} | ${friendName}: ${friendDrink.rating}/10 ${friendDrink.hasPhoto ? '📸' : ''}
+                                </div>
+                            `;
+                        }).join('') : '<p>No shared drinks yet!</p>'}
+                    </div>
+                    
+                    <div class="comparison-section">
+                        <h4>Only ${userName} Tried (${onlyMine.length})</h4>
+                        ${onlyMine.length > 0 ? onlyMine.slice(0, 5).map(d => 
+                            `<div style="padding: 5px; margin: 3px 0;">• ${d.name} (${d.location}) - ${d.rating}/10 ${d.hasPhoto ? '📸' : ''}</div>`
+                        ).join('') : '<p>None</p>'}
+                        ${onlyMine.length > 5 ? `<p>...and ${onlyMine.length - 5} more</p>` : ''}
+                    </div>
+                    
+                    <div class="comparison-section">
+                        <h4>Only ${friendName} Tried (${onlyFriend.length})</h4>
+                        ${onlyFriend.length > 0 ? onlyFriend.slice(0, 5).map(d => 
+                            `<div style="padding: 5px; margin: 3px 0;">• ${d.name} (${d.location}) - ${d.rating}/10 ${d.hasPhoto ? '📸' : ''}</div>`
+                        ).join('') : '<p>None</p>'}
+                        ${onlyFriend.length > 5 ? `<p>...and ${onlyFriend.length - 5} more</p>` : ''}
+                    </div>
+                    
+                    <div class="comparison-section">
+                        <h4>Who Wins?</h4>
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
+                            <div>Most Drinks: <strong>${drinks.length > friendDrinks.length ? userName : friendName}</strong></div>
+                            <div>Most Spent: <strong>${myTotalCost > friendTotalCost ? userName : friendName}</strong></div>
+                            <div>Most Saved: <strong>${myTotalSavings > friendTotalSavings ? userName : friendName}</strong></div>
+                            <div>Highest Avg Rating: <strong>${myAvgRating > friendAvgRating ? userName : friendName}</strong></div>
+                            <div>Most Locations: <strong>${myLocations.size > friendLocations.size ? userName : friendName}</strong></div>
+                            <div>Most Photos: <strong>${myPhotos > friendPhotos ? userName : friendName}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('comparisonResult').innerHTML = html;
+        }
+        
+        function closeCompareModal() {
+            document.getElementById('compareModal').classList.remove('active');
+        }
+        
+        async function clearAllData() {
+            if (confirm('Are you sure you want to delete ALL drink data? This cannot be undone!')) {
+                if (confirm('Really sure? This will permanently delete all ' + drinks.length + ' drinks and their photos!')) {
+                    for (const drink of drinks) {
+                        if (drink.hasPhoto) {
+                            try {
+                                await deletePhotoFromDB(drink.id);
+                            } catch (error) {
+                                console.error('Error deleting photo:', error);
+                            }
+                        }
+                    }
+                    
+                    drinks = [];
+                    saveData();
+                    updateDisplay();
+                    alert('All data has been cleared.');
+                }
+            }
+        }
+        
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+        
+        document.getElementById('compareModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCompareModal();
+            }
+        });
+        
+        document.getElementById('photoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePhotoModal();
+            }
+        });
+        
+        init();
+    </script>
+</body>
+</html>
